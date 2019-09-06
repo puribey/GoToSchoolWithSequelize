@@ -85,7 +85,20 @@ const Gig = db.define("gig", {
 
 module.exports = Gig;
 ```
+4. Routing
+Inside `app.js`:
+```
+app.use('/gigs', require('./routes/gigs));
+```
+Inside routes > `gigs.js`:
+```
+const express = require('express')
+const router = express.Router();
 
+router.get('/', (req, res) => res.send('GIGS'));
+
+module.exports = router;
+```
 
 
 
