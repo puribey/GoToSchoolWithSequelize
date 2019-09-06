@@ -7,19 +7,51 @@ const Gig = require("../models/Gig");
 router.get("/", (req, res) =>
   Gig.findAll()
     .then(gigs => {
-      res.render('gigs', {
-          gigs
+      res.render("gigs", {
+        gigs
       });
     })
     .catch(err => console.log(err))
 );
 
 // Display add gig form
-router.get('/add', (req, res)=> res.render('add'))
+router.get("/add", (req, res) => res.render("add"));
 
 // Add a gig
 router.post("/add", (req, res) => {
+  let { title, technologies, budget, description, contact_email } = req.body;
 
+  // Validate fields e.g.
+  let errors = [];
+  if (!title) {
+    errors.push({ text: "Please add title" });
+  }
+  if (errors.length > 0) {
+    res.render("add", {
+      errors,
+      title,
+      technologies,
+      budget,
+      description,
+      contact_email
+    });
+  } else {
+    if (!budget) {
+      budget = "Unknown";
+    }
+    technologies = technologies.toLowerCase().replace(/, /g, ",");
+
+    // Insert into table
+    Gig.create({
+      title,
+      technologies,
+      budget,
+      description,
+      contact_email
+    })
+      .then(gig => res.redirect("/gigs"))
+      .catch(err => console.log(err));
+  }
 });
 
 module.exports = router;
